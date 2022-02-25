@@ -111,7 +111,11 @@ class Distorter:
     def backpropogate(self, sampling_grid_locations):
         """ Backpropogates point locations from the sampling grid to the
         equirectangular domain. """
+        # Converts the sampling grid locations into a numpy array if it isn't already.
+        if not isinstance(sampling_grid_locations, np.ndarray):
+            sampling_grid_locations = np.array(sampling_grid_locations)
 
+        # Array storing the new x, y sampling positions on the 2d plane.
         equirect = np.zeros(shape=(sampling_grid_locations.shape[0],
                                    sampling_grid_locations.shape[1], 2))
         for i in range(0, sampling_grid_locations.shape[0]):
@@ -120,7 +124,7 @@ class Distorter:
                 lon, lat = self.lon_and_lat_3d(point[0], point[1], point[2])
                 new_x = ((lon / (2 * math.pi)) + 0.5) * self.width
                 new_y = (0.5 - (lat / math.pi)) * self.height
-            equirect[i][j] = [new_x, new_y]
+                equirect[i][j] = [new_x, new_y]
 
         return equirect
 
