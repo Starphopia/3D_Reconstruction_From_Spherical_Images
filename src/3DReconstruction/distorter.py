@@ -1,7 +1,7 @@
 from typing import Tuple
 
 class SamplingGridDistorter():
-    def __init__(self, width : int, height : int, kernel_width : int, kernel_height : int\
+    def __init__(self, width : int, height : int, kernel_width : int, kernel_height : int, \
                  stride : Tuple[int, int]):
         """
         :param width: width of the input image in pixels.
