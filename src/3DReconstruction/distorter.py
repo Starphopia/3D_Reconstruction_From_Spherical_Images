@@ -39,8 +39,15 @@ class SamplingGridDistorter():
         # Matches x and y coordinates.
         grid = grid.transpose((1, 3, 2, 4, 0))
         
+        print("GRID_SHAPE = ", grid.shape)
+        H, Kh, W, Kw, d = grid.shape  # (1, H*Kh, W*Kw, 2)
+        
         # Reshapes the grid so that the sampling grid for each coordinate is placed next to each other.
-        return grid.reshape(1, self.KH * self.H, self.KW * self.W, 2)
+        grid = grid.reshape((1, H * Kh, W * Kw, d))
+        y_grid = (2 * grid[:, :, :, 0] / self.H) - 1
+        x_grid = (2 * grid[:, :, :, 1] / self.W) - 1
+        
+        return np.stack((x_grid, y_grid), axis=-1)
         
     def _make_kernel(self):
         """
