@@ -39,7 +39,6 @@ class SamplingGridDistorter():
         # Matches x and y coordinates.
         grid = grid.transpose((1, 3, 2, 4, 0))
         
-        print("GRID_SHAPE = ", grid.shape)
         H, Kh, W, Kw, d = grid.shape  # (1, H*Kh, W*Kw, 2)
         
         # Reshapes the grid so that the sampling grid for each coordinate is placed next to each other.

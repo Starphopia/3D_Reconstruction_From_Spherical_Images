@@ -3,27 +3,30 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-class DistortionAwarePool(nn.MaxPool2d):
+class DistortionAwareMaxPool(nn.MaxPool2d):
     def __init__(self, kernel_size=(3, 3), stride=(1, 1), padding=0, dilation=1,
                return_indices = False, ceil_mode = False):
-        super(DistortionAwarePool, self).__init__(kernel_size=kernel_size, stride=stride, padding=padding,
+        super(DistortionAwareMaxPool, self).__init__(kernel_size=kernel_size, stride=stride, padding=padding,
                                                   dilation=dilation, return_indices=return_indices,
                                                   ceil_mode=ceil_mode)
-        (self.KH, self.KW) = kernel_size
+        if isinstance(kernel_size, int):
+            self.KH, self.KW = (kernel_size, kernel_size)
+        else:
+            self.KH, self.KW2 = kernel_size
         self.sampling_grid = None
         self.H = None
         self.W = None
-        self.stride = stride
+        
+        if isinstance(stride, int):
+            self.stride = (stride, stride)
+        else:
+            self.stride = stride
         
     def forward(self, input):
         # Remembers the distorted sampling locations for the last iamge size.
         if (self.H, self.W) != input.shape[2:4]:
             (self.H, self.W) = input.shape[2:4]
             
-            print("HEIGHT", self.H)
-            print("WIDTH", self.W)
-            print("KERNEL_WIDTH", self.KW)
-            print("KERNEL_HEIGHT", self.KH)
             # Computes the grid
             with torch.no_grad():
                 self.sampling_grid = torch.FloatTensor(SamplingGridDistorter(self.W, self.H, self.KW, 

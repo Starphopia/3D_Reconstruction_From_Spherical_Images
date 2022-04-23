@@ -11,12 +11,20 @@ class DistortionAwareConv(nn.Conv2d):
                                                 kernel_size=kernel_size, stride=stride, 
                                                 padding=padding, padding_mode=padding_mode,
                                                 dilation=dilation, groups=groups, bias=bias)
-        (self.KW, self.KH) = kernel_size
+        if isinstance(kernel_size, int):
+            self.KW = kernel_size
+            self.KH = kernel_size
+        else: 
+            self.KW, self.KH = kernel_size
+        
         self.sampling_grid = None
         self.H = None
         self.W = None
-        self.stride = stride
-        print(self.weight)
+        
+        if (isinstance(stride, int)):
+            self.stride = (stride, stride)
+        else:
+            self.stride = stride
         
     def forward(self, input):
         # Remembers the distorted sampling locations for the last image size.
